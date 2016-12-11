@@ -1,5 +1,6 @@
-import React, {PropTypes} from 'react';
-
+import React, { PropTypes } from 'react';
+import {connect} from 'react-redux';
+import * as courseActions from '../../actions/courseActions';
 
 class CoursesPage extends React.Component{
     constructor(props, context){
@@ -20,14 +21,23 @@ class CoursesPage extends React.Component{
     }
 
     onClickSave() {
-        alert(`Saved ${this.state.course.title}`);
+        this.props.dispatch(courseActions.createCourse(this.state.course));
+    }
+
+    courseRow(course, index){
+        return (<div className="row" key={index}>
+                <div className="col-xs-12">
+                    <h3>{course.title}</h3>
+                </div>
+                </div>);
     }
 
     render(){
         return(
-            <div>
+            <div className="col-xs-12">
                 <h1>Courses</h1>
                 <hr />
+                {this.props.courses.map(this.courseRow)}
                 <h2>Add Course</h2>
 
                     <div className="form-group row">
@@ -46,4 +56,14 @@ class CoursesPage extends React.Component{
     }
 }
 
-export default CoursesPage;
+CoursesPage.PropTypes = {
+    dispatch: PropTypes.func.isRequired,
+    courses: PropTypes.array.isRequired
+};
+
+function mapStateToProps(state, ownProps){
+    return {
+        courses: state.courses
+    };
+}
+export default connect(mapStateToProps)(CoursesPage);
